@@ -41,7 +41,7 @@ class RegisterRepositoryImpl implements RegisterRepository {
         return Left(ServerFailure());
       }
     } else {
-      throw ServerFailure();
+      return Left(ServerFailure());
     }
   }
 }

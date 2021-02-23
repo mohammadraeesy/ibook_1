@@ -22,7 +22,7 @@ class RegisterModel {
       password: json['password'],
       phonenumber: json['phonenumber'],
       email: json['email'],
-      firstname: json['firstname'],
+      firstname: json['name'],
       lastname: json['lastname'],
     );
   }
@@ -33,7 +33,7 @@ class RegisterModel {
       'password': password,
       'phonenumber': phonenumber,
       'email': email,
-      'firstname': firstname,
+      'name': firstname,
       'lastname': lastname,
     };
   }

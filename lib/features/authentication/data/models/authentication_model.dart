@@ -5,13 +5,13 @@ class AuthenticationModel extends AuthenticationEntity{
   AuthenticationModel ({
    @required String token,
    @required String refreshtoken,
-   @required DateTime expiredtoken,
+   @required String expiredtoken,
 }) : super(token: token , refreshToken: refreshtoken , expiredToken: expiredtoken);
 
   factory AuthenticationModel.fromJson(Map<String, dynamic> json){
     return AuthenticationModel(
-      token: json['token'],
-      refreshtoken: json['refreshtoken'],
+      token: json['accessToken'],
+      refreshtoken: json['tokenType'],
       expiredtoken: json['expiredtoken'],
     );
   }

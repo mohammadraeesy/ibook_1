@@ -7,6 +7,12 @@ import 'package:flutter_app_clean_auth/features/authentication/domain/use_cases/
 import 'package:flutter_app_clean_auth/features/authentication/domain/use_cases/find_token_authentication.dart';
 import 'package:flutter_app_clean_auth/features/authentication/domain/use_cases/save_token_authentication.dart';
 import 'package:flutter_app_clean_auth/features/authentication/presentation/bloc/authentication_bloc.dart';
+import 'package:flutter_app_clean_auth/features/forgot_password/data/data_sources/forgot_password_data_source.dart';
+import 'package:flutter_app_clean_auth/features/forgot_password/data/repositories/forgot_pass_repository_imol.dart';
+import 'package:flutter_app_clean_auth/features/forgot_password/domain/repositories/forgot_password_repository.dart';
+import 'package:flutter_app_clean_auth/features/forgot_password/domain/use_cases/chek_verify_code_usecase.dart';
+import 'package:flutter_app_clean_auth/features/forgot_password/domain/use_cases/forgot_password_usecase.dart';
+import 'package:flutter_app_clean_auth/features/forgot_password/presentation/bloc/forgot_password_bloc.dart';
 import 'package:flutter_app_clean_auth/features/login/data/data_sources/login_remote_data_source.dart';
 import 'package:flutter_app_clean_auth/features/login/data/repositories/login_repository_impl.dart';
 import 'package:flutter_app_clean_auth/features/login/domain/repositories/login_repository.dart';
@@ -24,11 +30,11 @@ import 'features/login/domain/use_cases/login.dart';
 
 final sl = GetIt.instance;
 
-
 Future<void> init() async {
   await authenticationInjection();
   await loginInjection();
   await registerInjection();
+  await forgotPasswordInjection();
 }
 
 Future<void> authenticationInjection() async {
@@ -39,10 +45,10 @@ Future<void> authenticationInjection() async {
   sl.registerLazySingleton(() => sharedPreferences);
   //Data Source
   sl.registerLazySingleton<AuthenticationDataSources>(
-          () => AuthenticationDataSourcesImpl(sharedPreferences: sl()));
+      () => AuthenticationDataSourcesImpl(sharedPreferences: sl()));
   // Repository Authentication
   sl.registerLazySingleton<AuthenticationRepository>(
-          () => AuthenticationRepositoryImpl(dataSources: sl()));
+      () => AuthenticationRepositoryImpl(dataSources: sl()));
   // Use cases Authentication
   sl.registerLazySingleton(() => CheckToken(sl()));
   sl.registerLazySingleton(() => SaveToken(sl()));
@@ -51,16 +57,12 @@ Future<void> authenticationInjection() async {
   // bloc
   sl.registerFactory(
     () => AuthenticationBloc(
-      checkToken: sl(),
+      checkTokenUseCase: sl(),
       deleteToken: sl(),
       findToken: sl(),
       saveToken: sl(),
     ),
   );
-
-
-
-
 }
 
 Future<void> loginInjection() async {
@@ -70,16 +72,14 @@ Future<void> loginInjection() async {
   sl.registerLazySingleton(() => http.Client());
   sl.registerLazySingleton(() => DataConnectionChecker());
   // Data Source Login
-  sl.registerLazySingleton(
-          () => LoginRemoteDataSourceImpl(client: sl()));
+  sl.registerLazySingleton(() => LoginRemoteDataSourceImpl(client: sl()));
   // Repository Login
   sl.registerLazySingleton<LoginRepository>(
-          () => LoginRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
+      () => LoginRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
   // Use cases Authentication
   sl.registerLazySingleton(() => LoginUsecase(sl()));
   // Bloc Login
   sl.registerFactory(() => LoginBloc(login: sl(), authenticationBloc: sl()));
-
 }
 
 Future<void> registerInjection() async {
@@ -93,4 +93,19 @@ Future<void> registerInjection() async {
   //Data Source Register
   sl.registerLazySingleton<RegisterRemoteDataSource>(
       () => RegisterRemoteDataSourceImpl(client: sl()));
+}
+
+Future<void> forgotPasswordInjection() async {
+  //bloc
+  sl.registerFactory(() => ForgotPasswordBloc(
+      checkVerifyCodeUseCase: sl(), forgotPasswordUseCase: sl()));
+  //usecase
+  sl.registerLazySingleton(() => ForgotPasswordUseCase(repository: sl()));
+  sl.registerLazySingleton(() => CheckVerifyCodeUseCase(repository: sl()));
+  //Repository
+  sl.registerLazySingleton<ForgotPasswordRepository>(
+      () => ForgotPasswordRepositoryImpl(networkInfo: sl(), dataSource: sl()));
+  //Data Source
+  sl.registerLazySingleton<ForgotPasswordDataSource>(
+      () => ForgotPasswordDataSourceImpl(client: sl()));
 }

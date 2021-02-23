@@ -9,6 +9,7 @@ import 'package:flutter_app_clean_auth/features/authentication/presentation/bloc
 import 'package:flutter_app_clean_auth/features/login/domain/use_cases/login.dart';
 
 part 'login_event.dart';
+
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
@@ -21,24 +22,27 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         super(Empty());
 
   @override
-  Stream<LoginState> mapEventToState(LoginEvent event,) async* {
+  Stream<LoginState> mapEventToState(
+    LoginEvent event,
+  ) async* {
     if (event is clickButtonPress) {
-      yield Loading();
+       yield Loading();
       //yield* _startProcessLogin(event.username, event.password);
-      final Either<Failure, AuthenticationEntity> failureOrLogin =
-      await login(Params(username: event.username, password: event.password));
-      yield failureOrLogin.fold(
-            (failure) => Error(message: 'ERROR'),
-            (authtication) {
+      final Either<Failure, AuthenticationEntity> failureOrLogin = await login(
+          Params(username: event.username, password: event.password));
+      yield* failureOrLogin.fold(
+        (failure) async* {
+          yield Error(message: 'ERROR');
+        },
+        (authtication) async* {
           authenticationBloc.add(logIn(
               token: authtication.token,
               refreshToken: authtication.refreshToken,
               expiredToken: authtication.expiredToken));
-              return Loaded(massage: 'successfully Login');
+          yield Loaded(massage: 'successfully Login');
         },
       );
-    }
-    else {
+    } else {
       yield Error(message: 'ERROR');
     }
   }
@@ -62,7 +66,3 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 // token: r.token,
 // refreshToken: r.refreshToken,
 // expiredToken: r.expiredToken)
-
-
-
-

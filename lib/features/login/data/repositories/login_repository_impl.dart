@@ -21,13 +21,13 @@ class LoginRepositoryImpl implements LoginRepository {
   Future<Either<Failure, AuthenticationEntity>> login(String username, String password) async {
     if (await networkInfo.isConnected) {
       try {
-        final respons = await remoteDataSource.login(LoginModel(username: username, password: password));
-        return Right(respons);
+        final authenticationEntity = await remoteDataSource.login(LoginModel(username: username, password: password));
+        return Right(authenticationEntity);
       } on ServerException {
         return Left(ServerFailure());
       }
     }else{
-      throw ServerFailure();
+      return Left(ServerFailure());
     }
   }
 }

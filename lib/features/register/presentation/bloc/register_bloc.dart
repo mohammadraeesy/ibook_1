@@ -21,7 +21,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   Stream<RegisterState> mapEventToState(
     RegisterEvent event,
   ) async* {
-    if (event is clickButtonPress) {
+    if (event is clickButtomPress) {
       yield Loading();
       //yield* _startProcessLogin(event.username, event.password);
       final Either<Failure, bool> failureOrRegister =

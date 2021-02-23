@@ -10,7 +10,7 @@ class clickButtonPress extends LoginEvent {
   final String username;
   final String password;
 
-  clickButtonPress(this.username,this.password);
+  clickButtonPress({@required this.username,@required this.password});
 
   @override
   List<Object> get props => [username,password];
