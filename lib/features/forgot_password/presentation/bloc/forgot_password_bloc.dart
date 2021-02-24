@@ -43,7 +43,7 @@ class ForgotPasswordBloc
       yield LoadingForgotPasswordState();
       if (event.password1 == event.password2){
         final faliorOrSubmit = await checkVerifyCodeUseCase(Params(
-            password: event.password1,
+            password: event.password1 ,
             verifyCode: event.verifyCode,
             username: event.username));
         yield* faliorOrSubmit.fold((left) async* {

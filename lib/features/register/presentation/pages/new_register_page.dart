@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_clean_auth/features/activision_account/presentation/pages/activision_page.dart';
 import 'package:flutter_app_clean_auth/features/register/presentation/bloc/register_bloc.dart';
 import 'package:flutter_app_clean_auth/features/register/presentation/wigets/bottom.dart';
 import 'package:flutter_app_clean_auth/features/register/presentation/wigets/text_field_wiget.dart';
@@ -167,7 +168,9 @@ class RegisterPage extends StatelessWidget {
                         style: TextStyle(fontFamily: 'Rajdhani', fontSize: 15),
                       ),
                       FlatButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (contex)=>ActivisionPage(username: textControllerUsename.text)));
+                          },
                           child: Text(
                             'SIGN UP',
                             style: TextStyle(

@@ -1,4 +1,9 @@
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:flutter_app_clean_auth/features/activision_account/data/data_sources/activision_account_data_sources.dart';
+import 'package:flutter_app_clean_auth/features/activision_account/data/repositories/activision_account_impl.dart';
+import 'package:flutter_app_clean_auth/features/activision_account/domain/repositories/activision_account_repository.dart';
+import 'package:flutter_app_clean_auth/features/activision_account/domain/use_cases/activision_account_usecase.dart';
+import 'package:flutter_app_clean_auth/features/activision_account/presentation/bloc/activision_bloc.dart';
 import 'package:flutter_app_clean_auth/features/authentication/data/data_sources/authentication_local_data_source.dart';
 import 'package:flutter_app_clean_auth/features/authentication/data/repositories/authentication_repository_impl.dart';
 import 'package:flutter_app_clean_auth/features/authentication/domain/repositories/repository_authentication.dart';
@@ -35,6 +40,7 @@ Future<void> init() async {
   await loginInjection();
   await registerInjection();
   await forgotPasswordInjection();
+  await activationAccountInjection();
 }
 
 Future<void> authenticationInjection() async {
@@ -108,4 +114,14 @@ Future<void> forgotPasswordInjection() async {
   //Data Source
   sl.registerLazySingleton<ForgotPasswordDataSource>(
       () => ForgotPasswordDataSourceImpl(client: sl()));
+}
+Future<void> activationAccountInjection()async{
+  //bloc
+  sl.registerFactory(() => ActivisionBloc(activisionAccountUsecase: sl()));
+  //usecase
+  sl.registerLazySingleton(() => ActivisionAccountUsecase(repository: sl()));
+  //reposiyory
+  sl.registerLazySingleton<ActivisionAccountRepository>(() => ActivisionAccountRepositoryImpl(dataSource: sl(), networkInfo: sl()));
+  //data source
+  sl.registerLazySingleton<ActivisionAccountDataSource>(() => ActivisionAccountDataSourceImpl(client: sl()));
 }
